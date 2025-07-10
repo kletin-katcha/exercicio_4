@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Área e Jogo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .input-group {
+            transition: all 0.3s ease-in-out;
+        }
+        .hidden-group {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Calculadora de Área e Jogo</h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Escolha a forma, calcule a área e teste sua sorte!</p>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">1. Escolha a forma</h2>
+            <div class="flex justify-center space-x-4 mt-4" id="shape-selector">
+                <label class="cursor-pointer">
+                    <input type="radio" name="shape" value="quadrado" class="sr-only peer" checked onchange="showInputs('quadrado')">
+                    <div class="w-24 text-center p-3 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 peer-checked:bg-blue-600 peer-checked:text-white">Quadrado</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="shape" value="retangulo" class="sr-only peer" onchange="showInputs('retangulo')">
+                    <div class="w-24 text-center p-3 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 peer-checked:bg-blue-600 peer-checked:text-white">Retângulo</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="shape" value="circulo" class="sr-only peer" onchange="showInputs('circulo')">
+                    <div class="w-24 text-center p-3 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 peer-checked:bg-blue-600 peer-checked:text-white">Círculo</div>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">2. Insira as medidas</h2>
+            <div id="quadrado-inputs" class="input-group mt-4">
+                <label for="lado" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lado</label>
+                <input type="number" id="lado" placeholder="Ex: 5" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div id="retangulo-inputs" class="input-group hidden-group mt-4">
+                <label for="largura" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Largura</label>
+                <input type="number" id="largura" placeholder="Ex: 4" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="altura" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-2">Altura</label>
+                <input type="number" id="altura" placeholder="Ex: 6" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div id="circulo-inputs" class="input-group hidden-group mt-4">
+                <label for="raio" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Raio</label>
+                <input type="number" id="raio" placeholder="Ex: 3" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <button onclick="calculateAndPlay()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-transform transform hover:scale-105">
+                Calcular e Jogar!
+            </button>
+        </div>
+
+        <div id="result-area" class="mt-8 text-center text-lg font-semibold text-gray-800 dark:text-white h-8"></div>
+        <div id="result-game" class="mt-2 text-center text-xl font-bold h-8"></div>
+    </div>
+
+    <script>
+        function showInputs(shape) {
+            document.getElementById('quadrado-inputs').classList.add('hidden-group');
+            document.getElementById('retangulo-inputs').classList.add('hidden-group');
+            document.getElementById('circulo-inputs').classList.add('hidden-group');
+            
+            document.getElementById(`${shape}-inputs`).classList.remove('hidden-group');
+        }
+
+        function calculateAndPlay() {
+            const shape = document.querySelector('input[name="shape"]:checked').value;
+            const resultAreaDiv = document.getElementById('result-area');
+            const resultGameDiv = document.getElementById('result-game');
+
+            let area = 0;
+            let isValid = true;
+
+            resultAreaDiv.textContent = '';
+            resultGameDiv.textContent = '';
+            resultGameDiv.className = 'mt-2 text-center text-xl font-bold h-8';
+
+            switch (shape) {
+                case 'quadrado':
+                    const lado = parseFloat(document.getElementById('lado').value);
+                    if (isNaN(lado) || lado <= 0) isValid = false;
+                    else area = lado * lado;
+                    break;
+                case 'retangulo':
+                    const largura = parseFloat(document.getElementById('largura').value);
+                    const altura = parseFloat(document.getElementById('altura').value);
+                    if (isNaN(largura) || isNaN(altura) || largura <= 0 || altura <= 0) isValid = false;
+                    else area = largura * altura;
+                    break;
+                case 'circulo':
+                    const raio = parseFloat(document.getElementById('raio').value);
+                    if (isNaN(raio) || raio <= 0) isValid = false;
+                    else area = Math.PI * raio * raio;
+                    break;
+            }
+
+            if (!isValid) {
+                resultAreaDiv.textContent = 'Por favor, insira valores válidos e positivos.';
+                resultAreaDiv.className = 'mt-8 text-center text-lg font-semibold text-red-500';
+                return;
+            }
+
+            resultAreaDiv.textContent = `A área é: ${area.toFixed(2)}`;
+            resultAreaDiv.className = 'mt-8 text-center text-lg font-semibold text-gray-800 dark:text-white';
+
+            const areaInteger = Math.floor(area);
+
+            if (areaInteger % 2 === 0) {
+                resultGameDiv.textContent = 'Parabéns, o resultado é PAR! Você ganhou!';
+                resultGameDiv.classList.add('text-green-500');
+            } else {
+                resultGameDiv.textContent = 'Que pena, o resultado é ÍMPAR! Você perdeu.';
+                resultGameDiv.classList.add('text-red-500');
+            }
+        }
+        
+        window.onload = () => {
+            showInputs('quadrado');
+        };
+    </script>
+</body>
+</html>
