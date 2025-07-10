@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Faixa Etária</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Verificador de Faixa Etária</h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Digite seu ano de nascimento para descobrir sua faixa etária.</p>
+        </div>
+
+        <div class="mt-8">
+            <label for="birthYear" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano de Nascimento</label>
+            <input type="number" id="birthYear" name="birthYear" placeholder="Ex: 1995" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="mt-6">
+            <button onclick="checkAgeGroup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-transform transform hover:scale-105">
+                Verificar
+            </button>
+        </div>
+
+        <div id="result" class="mt-8 text-center text-lg font-semibold text-gray-800 dark:text-white h-8">
+        </div>
+    </div>
+
+    <script>
+        function checkAgeGroup() {
+            const birthYearInput = document.getElementById('birthYear');
+            const resultDiv = document.getElementById('result');
+
+            const birthYear = parseInt(birthYearInput.value);
+            const currentYear = new Date().getFullYear();
+
+            if (isNaN(birthYear) || birthYear <= 0 || birthYear > currentYear) {
+                resultDiv.textContent = 'Por favor, insira um ano válido.';
+                resultDiv.className = 'mt-8 text-center text-lg font-semibold text-red-500';
+                return;
+            }
+
+            const age = currentYear - birthYear;
+            let ageGroup = '';
+            let textColor = 'text-gray-800 dark:text-white';
+
+            if (age >= 0 && age < 12) {
+                ageGroup = 'Criança';
+                textColor = 'text-green-500';
+            } else if (age > 13 && age < 17) {
+                ageGroup = 'Jovem / Adolescente';
+                textColor = 'text-yellow-500';
+            } else if (age > 17 && age < 59) {
+                ageGroup = 'Adulto';
+                textColor = 'text-blue-500';
+            } else if (age > 60) {
+                ageGroup = 'Idoso';
+                textColor = 'text-purple-500';
+            } else {
+                ageGroup = 'Idade inválida.';
+                textColor = 'text-red-500';
+            }
+
+            resultDiv.textContent = `Você tem ${age} anos. Sua faixa etária é: ${ageGroup}.`;
+            resultDiv.className = `mt-8 text-center text-lg font-semibold ${textColor}`;
+        }
+
+        document.getElementById('birthYear').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkAgeGroup();
+            }
+        });
+    </script>
+</body>
+</html>
